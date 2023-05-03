@@ -1,6 +1,8 @@
 # kaggleasl5thplacesolution
 
-This is the source code of the solution of Team ⭐⭐⭐in the prize line⭐⭐⭐ for the competition Google - Isolated Sign Language Recognition (https://www.kaggle.com/competitions/asl-signs/overview).
+This is the source code of the solution of Team ⭐⭐⭐in the prize line⭐⭐⭐ for the competition Google - Isolated Sign Language Recognition (https://www.kaggle.com/competitions/asl-signs/overview). 
+
+We trained our models with 4x A100 GPUs with the batch size 128(32 * 4).
 
 1. Run makedataset.py to prepare the dataset for dataloader.
 2. Run main_zyz.py to run the code ddp.
