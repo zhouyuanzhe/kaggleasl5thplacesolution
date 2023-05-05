@@ -6,7 +6,7 @@ We trained our models with 4x A100 GPUs with the batch size 128(32 * 4). The inp
 
 0. use pip install -r requirements.txt  to install dependency.
 1. Run makedataset.py to prepare the dataset for dataloader.
-2. Run main.py to train the model ddp.
+2. Run sh run.sh to train the model ddp.
 3. Use the notebook merge.ipynb for making submissions for the competition.
 
 Our final submission consists of 2 models. One with more parameters with mainly the following settings,
