@@ -10,10 +10,10 @@ import torch
 import torch.nn as nn
 
 from torch.utils.data import Dataset, DataLoader
-from torchvision import transforms
+#from torchvision import transforms
 
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score
+#from sklearn.model_selection import train_test_split
+#from sklearn.metrics import accuracy_score
 
 import warnings
 warnings.filterwarnings(action='ignore')
@@ -21,6 +21,9 @@ warnings.filterwarnings(action='ignore')
 LANDMARK_FILES_DIR = "./train_landmark_files"
 TRAIN_FILE = "./train.csv"
 label_map = json.load(open("./sign_to_prediction_index_map.json", "r"))
+
+# create directory for datasets
+os.system('mkdir data')
 
 class FeatureGen(nn.Module):
     def __init__(self):
@@ -78,11 +81,11 @@ def convert_and_save_data(val=False):
         data_list.append({'data':data, 'label':label, 'participant_id': participant_id})
 
     if val:
-        np.save(f"./val.npy", np.array(data_list))
+        np.save(f"./data/val.npy", np.array(data_list))
     else:
         sublen = df.shape[0]//8+1
         for i in range(8):
-            np.save(f"./train_{i}.npy", np.array(data_list[i*sublen:i*sublen+sublen]))
+            np.save(f"./data/train_{i}.npy", np.array(data_list[i*sublen:i*sublen+sublen]))
 
 convert_and_save_data(True)
 convert_and_save_data(False)
@@ -105,6 +108,6 @@ def convert_and_save_data2():
 
     sublen = df.shape[0]//8+1
     for i in range(8):
-        np.save(f"./atrain_{i}.npy", np.array(data_list[i*sublen:i*sublen+sublen]))
+        np.save(f"./data/train_full_{i}.npy", np.array(data_list[i*sublen:i*sublen+sublen]))
 
 convert_and_save_data2()

@@ -110,7 +110,7 @@ val_loader = DataLoader(val_dataset, batch_size=batch_size, num_workers=4, sampl
 model = M(nlayers)
 model.cuda(args.local_rank)
 
-ema = EMA(model, 0.9998)
+ema = EMA(model, 0.9999)
 ema.register()
 
 
@@ -119,8 +119,8 @@ stepsize = len(train_dataset) // batch_size + 1
 total_steps = stepsize * epochs
 scheduler = get_linear_schedule_with_warmup(opt, num_warmup_steps=warmup_ratio*total_steps, num_training_steps=total_steps)
 
-awp = AWP(model=model, optimizer=opt, adv_lr=3e-5,
-              adv_eps=1e-2, start_epoch=1)
+awp = AWP(model=model, optimizer=opt, adv_lr=1e-5,
+              adv_eps=1e-2, start_epoch=50)
 
 
 
@@ -148,7 +148,7 @@ for e in range(epochs):
 
         res = model(data)
         res_softmax = F.softmax(res, dim=1)
-        loss = F.cross_entropy(res, label, label_smoothing=0.5) # cross entropy loss with label smoothing 0.5
+        loss = F.cross_entropy(res, label, label_smoothing=0.75) # cross entropy loss with label smoothing 0.5
         label_onehot = F.one_hot(label, num_classes=250)
         loss_poly = 1. - (label_onehot * res_softmax).sum(dim=1).mean() # poly loss
         loss += loss_poly
@@ -160,7 +160,7 @@ for e in range(epochs):
         awp.attack_backward(e) # AWP attach, and then re-compute the loss again
         res = model(data)
         res_softmax = F.softmax(res, dim=1)
-        loss = F.cross_entropy(res, label, label_smoothing=0.5)
+        loss = F.cross_entropy(res, label, label_smoothing=0.75)
         loss_poly = 1. - (label_onehot * res_softmax).sum(dim=1).mean()
         loss += loss_poly
         loss_kl = compute_kl_loss(res[:bs], res[bs:])
@@ -169,7 +169,7 @@ for e in range(epochs):
         awp.restore()
 
 
-        torch.nn.utils.clip_grad_norm_(model.parameters(), 2.0) # clip the gradient  
+        torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0) # clip the gradient  
         opt.step()
         ema.update()
         scheduler.step()
